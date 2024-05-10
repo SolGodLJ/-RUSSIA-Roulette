@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Russian Roulette</title>
+  <style>
+    body {
+        margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    #gameWindow {
+      width: 920px; /* Adjust the width of the game window */
+      height: 920px; /* Adjust the height of the game window */
+      border: 0px solid #000; /* Add a border to the game window */
+      position: relative;
+      background-image: url('img/background.png'); /* Replace 'your_background_image.jpg' with the path to your background image */
+      background-size: contain;
+    }
+    
+    #container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    #player {
+      position: absolute;
+      bottom: -64px; /* Adjust the position of the player */
+      left: -90px; /* Adjust the position of the player */
+      width: 600px;
+      height: 600px;
+      background-image: url('img/player.png'); /* Add the path to your player image */
+      background-size: cover;
+      z-index: 2; /* Ensure the player is above the background */
+    }
+    
+    #enemy {
+      position: absolute;
+      top: 250px; /* Adjust the position of the enemy */
+      right: 270px; /* Adjust the position of the enemy */
+      width: 150px;
+      height: 450px;
+      background-image: url('img/enemy1.png'); /* Add the path to your enemy image */
+      background-size: cover;
+      z-index: 2; /* Ensure the enemy is above the background */
+    }
+    
+    #bullet {
+      position: absolute;
+      bottom: 50px;
+      left: 50px;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      border-radius: 50%;
+      z-index: 3; /* Ensure the bullet is above the player and enemy */
+      transition: all 1s ease;
+    }
+    
+    #shotButton {
+      position: absolute;
+      bottom: 20px;
+      left: calc(50% - 50px); /* Center the button horizontally */
+      padding: 10px 20px;
+      background-color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      z-index: 4; /* Ensure the button is above all other elements */
+    }
+  </style>
+</head>
+<body>
+    <div id="gameWindow">
+      <div id="container">
+        <div id="player"></div>
+        <div id="enemy"></div>
+        <div id="bullet"></div>
+      </div>
+      <button id="shotButton">Shot</button> <!-- Button to start the game -->
+    </div>
+  
+  <button id="shotButton">Shot</button> <!-- Button to start the game -->
+  
+  <script>
+    const bullet = document.getElementById('bullet');
+    const container = document.getElementById('container');
+    const enemy = document.getElementById('enemy');
+    const shotButton = document.getElementById('shotButton');
+    
+    let bulletInterval;
+    
+    // Function to start the game when the "Shot" button is clicked
+    function startGame() {
+      shootBullet();
+    }
+    
+    function shootBullet() {
+      bullet.style.left = container.offsetWidth + 'px';
+      bullet.style.bottom = container.offsetHeight / 2 + 'px';
+      const randomChance = Math.random();
+      if (randomChance < 1 / 6) {
+        bulletInterval = setInterval(moveBullet, 10);
+      } else {
+        alert('You missed!');
+        bullet.style.left = '50px';
+        bullet.style.bottom = '50px';
+      }
+    }
+    
+    function moveBullet() {
+      const bulletRect = bullet.getBoundingClientRect();
+      const enemyRect = enemy.getBoundingClientRect();
+      
+      if (bulletRect.left < enemyRect.right && bulletRect.bottom > enemyRect.top) {
+        clearInterval(bulletInterval);
+        alert('You hit the enemy!');
+        bullet.style.left = '50px';
+        bullet.style.bottom = '50px';
+      } else if (bulletRect.left > container.offsetWidth) {
+        clearInterval(bulletInterval);
+        alert('You missed!');
+        bullet.style.left = '50px';
+        bullet.style.bottom = '50px';
+      } else {
+        bullet.style.left = bulletRect.left + 10 + 'px';
+      }
+    }
+    
+    // Add event listener to the "Shot" button
+    shotButton.addEventListener('click', startGame);
+  </script>
+</body>
+</html>
